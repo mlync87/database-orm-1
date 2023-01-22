@@ -42,9 +42,59 @@ async function seed() {
     },
   });
 
+  const createdScreen = await prisma.screen.create({
+    data: {
+      screenNumber: 2,
+    },
+  });
+
   const createdScreening = await prisma.screening.create({
     data: {
       startsAt: 1830,
+      movie: {
+        connect: {
+          id: createdMovie.id,
+        },
+      },
+      screen: {
+        connect: {
+          id: createdScreen.id,
+        },
+      },
+    },
+  });
+
+  const createMovieWithScreenings = await prisma.movie.create({
+    data: {
+      title: "The Blair Witch Project",
+      runtimeMins: 89,
+      screenings: {
+        create: [
+          {
+            startsAt: 1745,
+            screen: {
+              connect: {
+                id: createdScreen.id,
+              },
+            },
+          },
+        ],
+      },
+    },
+  });
+
+  const createTicketWithCustomerAndScreeningInfo = await prisma.ticket.create({
+    data: {
+      customer: {
+        connect: {
+          id: createdCustomer.id,
+        },
+      },
+      screening: {
+        connect: {
+          id: createdScreening.id,
+        },
+      },
     },
   });
 
